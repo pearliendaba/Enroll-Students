@@ -23,6 +23,7 @@ router.get('/',(req,res) =>{
             message:'Getting all Students',
             result
         })
+        res.send({result})
     }
 })
 });

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { StudentService } from '../student.service';
+import { Students } from '../student.model';
 
 @Component({
   selector: 'app-home',
@@ -8,26 +10,21 @@ import { Component, OnInit } from '@angular/core';
 export class HomeComponent implements OnInit {
   selectedStudent: any;
   name: string;
-
-  // private fieldArray: Array<any> = [];
-  // private newAttribute: any = {};
-  // addFieldValue() {
-  //     this.fieldArray.push(this.newAttribute)
-  //     this.newAttribute = {};
-  // }
-
-  elements: any = [
-    {id: 1, name: 'Mark', email: 'mark@o.com', module: 'php', rDate: '12/06/2020', eDate: '12/06/2020'},
-    {id: 2, name: 'Jacob', email: 'jacob@t.com', module: 'c++', rDate: '12/06/2020', eDate: '12/06/2020'},
-    {id: 3, name: 'Larry', email: 'larry@s.com', module: 'c#', rDate: '12/06/2020', eDate: '12/06/2020'},
-  ];
-
+  students:any = []; 
+  
   headElements = ['ID', 'First', 'Email', 'Module(s)', 'Date Registred', 'Date Edited', 'Action'];
 
-  constructor() {
-    this.getStudent(name)
+  constructor(private service:StudentService) {
+    this.getStudent(name);
+    this.getAllStudents();
   }
 
+  getAllStudents(){
+    this.service.getStud().subscribe((data) =>{
+      this.students=data
+      console.log(data);
+    })
+  }
   ngOnInit(): void {
   }
 
@@ -40,6 +37,7 @@ export class HomeComponent implements OnInit {
   getStudent(name) {
     //this.service.getStudent(['/details', name]);
   }
+
 
 
 }
