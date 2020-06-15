@@ -27,11 +27,40 @@ router.get('/',(req,res) =>{
 })
 });
 
+//get module
+router.get('/module/:id',(req,res) =>{
+    var id = req.params.id
+    let sql = `Select ModuleName
+    From Module
+    Where ModuleID = ?;`
+
+    con.query(sql,[id],(err,result) => {
+        console.log(result)
+    if(err){
+        res.status(404).json({
+            message:`can't find the module`
+        })
+    }else{
+        res.status(200).json({
+            message:'Getting all Modules',
+            result
+        })
+    }
+})
+});
+
 
 //get student by id 
 router.get('/:id',(req,res)=>{
     var id = req.params.id
-    var sql = 'SELECT * FROM Student WHERE StudentID = ?';
+    var sql = `Select Student.*, Module.ModuleName
+    From Student
+    JOIN Enrollment
+    ON Student.StudentID = Enrollment.StudentID
+    JOIN Module
+    ON Enrollment.ModuleID = Module.ModuleID
+    Where Student.StudentID = ?`;
+
     con.query(sql, [id], function (err, result) {
         if(err){
             res.status(404).json({
@@ -54,8 +83,9 @@ router.post('/',(req,res) => {
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     var dateTime = date+' '+time;
     console.log(dateTime);
-    var sql = "INSERT INTO `Student`(`StudentName`,`Email`, `Date_Registered`,`Date_Edited`) VALUES ('"+req.body.StudentName+"','"+req.body.Email+"','"+req.body.dateTime+"','"+req.body.dateTime+"');"
-    con.query(sql,function(err,result){
+    var sql1 = "INSERT INTO `Student`(`StudentName`,`Email`, `Date_Registered`,`Date_Edited`) VALUES ('"+req.body.StudentName+"','"+req.body.Email+"','"+req.body.Date_Registered+"','"+req.body.Date_Edited+"')"
+
+    con.query(sql1, function(err,result){
         if(err){
             console.log(err)
         }else{
@@ -68,11 +98,16 @@ router.post('/',(req,res) => {
 })
 
 
-
 //update student 
 router.patch('/:id',(req,res) => {
     var id = req.params.id
-    var sql = "UPDATE Student SET StudentName='"+req.body.StudentName+"', Email='"+req.body.Email+"' WHERE StudentID = ?";
+
+    var sql = `UPDATE Student 
+    INNER JOIN Enrollment ON Student.StudentID = Enrollment.StudentID
+    INNER JOIN Module ON Module.ModuleID = Enrollment.ModuleID
+    SET StudentName=?, Email=?, Date_edited= ?,Module.ModuleName= ?
+    WHERE StudentID = ?;`
+
     con.query(sql, [id], function (err, result) {
         if(err){
             res.status(404).json({
