@@ -2,8 +2,8 @@ Create Table Student(
     StudentID int(6) primary key auto_increment,
     StudentName varchar(30) ,
     Email varchar(30),
-    Date_Registered datetime,
-    Date_Edited datetime
+    Date_Registered timestamp;
+    Date_Edited timestamp;
 );
 
 Create Table Module(
